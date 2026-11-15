@@ -296,7 +296,7 @@ func (rules *fileRules) fieldList(list *ast.FieldList) {
 // ifStmt reports what is split inside an if header, and with FixHeaders
 // moves it out.
 func (rules *fileRules) ifStmt(statement *ast.IfStmt, isElseIf bool) {
-	if statement.Init != nil && rules.multiline(statement.Init) {
+	if statement.Init != nil && rules.initSpansHeader(statement.Init) {
 		if !rules.canFixHeader(isElseIf) {
 			if isElseIf {
 				rules.report(statement.Init.Pos(), "if init spans lines in an else if; restructure it by hand")
@@ -328,6 +328,15 @@ func (rules *fileRules) ifStmt(statement *ast.IfStmt, isElseIf bool) {
 		}
 		return true
 	})
+}
+
+// initSpansHeader ignores line breaks introduced inside a nested expression.
+func (rules *fileRules) initSpansHeader(statement ast.Stmt) bool {
+	assign, isAssign := statement.(*ast.AssignStmt)
+	if !isAssign || len(assign.Rhs) == 0 {
+		return rules.multiline(statement)
+	}
+	return rules.line(assign.TokPos) != rules.line(assign.Rhs[0].Pos())
 }
 
 func (rules *fileRules) structLitArgument(call *ast.CallExpr) bool {

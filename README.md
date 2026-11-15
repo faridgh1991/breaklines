@@ -95,7 +95,7 @@ EDIT.` line) are skipped.
 remain. `2`: an error, or changes that would add type errors (nothing is written).
 
 **Diagnostics** print as `file:line:col: message`, with positions in the reformatted file, as `-w` writes it. Run
-with `-w` first, then fix what remains by hand.
+with `-w` first, then fix what remains by hand. A summary groups diagnostics by message and prints their total.
 
 ## Safety
 

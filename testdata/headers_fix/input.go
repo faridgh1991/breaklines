@@ -11,7 +11,8 @@ var errFailed = errors.New("failed")
 func check(value input) (int, error) { return 0, nil }
 
 func moves() error {
-	if _, err := check(input{Name: "a"}); err != nil {
+	if _, err :=
+		check(input{Name: "a"}); err != nil {
 		return err
 	}
 	if _, err := check(input{Name: "b"}); err != nil {

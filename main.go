@@ -133,6 +133,7 @@ func run() int {
 	for _, diagnostic := range result.Diagnostics {
 		fmt.Println(diagnostic)
 	}
+	printDiagnosticSummary(result.Diagnostics)
 	if !*write && len(result.Changed) > 0 || len(result.Diagnostics) > 0 {
 		return 1
 	}
@@ -152,4 +153,24 @@ func buildVersion() string {
 		return info.Main.Version
 	}
 	return "devel"
+}
+
+func printDiagnosticSummary(diagnostics []Diagnostic) {
+	if len(diagnostics) == 0 {
+		return
+	}
+	counts := map[string]int{}
+	for _, diagnostic := range diagnostics {
+		counts[diagnostic.Message]++
+	}
+	messages := make([]string, 0, len(counts))
+	for message := range counts {
+		messages = append(messages, message)
+	}
+	sort.Strings(messages)
+	fmt.Println("Issues:")
+	for _, message := range messages {
+		fmt.Printf("%d %s\n", counts[message], message)
+	}
+	fmt.Printf("Total: %d issues\n", len(diagnostics))
 }
