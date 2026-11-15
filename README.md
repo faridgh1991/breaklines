@@ -46,8 +46,8 @@ A call that takes a struct literal no longer fits on one line, so its arguments 
 - A call whose last argument is a function literal keeps the arguments before it on its first line, as Go code
   usually does (`-trailing-func`, on by default): `t.Run(name, func(t *testing.T) {`.
 
-**Headers.** A call or struct literal split inside an `if` or `for` header, and a multi-value assignment over several
-lines (`a, b :=` with `x, y` on the next line), are reported, not fixed. With `-fix-headers`:
+**Headers.** Calls and struct literals in `if` conditions are allowed. A call in a `for` condition and a multi-value
+assignment over several lines (`a, b :=` with `x, y` on the next line) are reported. With `-fix-headers`:
 
 - A multi-line `if x := ...; cond {` init moves before the `if`. A `:=` whose variables all exist earlier in the same
   block becomes `=`. The move is refused, and reported, when it would change which variable the code refers to: when
