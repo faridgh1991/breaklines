@@ -321,7 +321,7 @@ func (rules *fileRules) ifStmt(statement *ast.IfStmt, isElseIf bool) {
 				return false
 			}
 		case *ast.CallExpr:
-			if rules.multiline(node) || rules.structLitArgument(node) {
+			if rules.callSpansHeader(node) {
 				rules.report(node.Pos(), "call spans lines in an if condition; assign its result first")
 				return false
 			}
@@ -337,6 +337,29 @@ func (rules *fileRules) initSpansHeader(statement ast.Stmt) bool {
 		return rules.multiline(statement)
 	}
 	return rules.line(assign.TokPos) != rules.line(assign.Rhs[0].Pos())
+}
+
+// callSpansHeader ignores line breaks introduced inside a nested argument.
+func (rules *fileRules) callSpansHeader(call *ast.CallExpr) bool {
+	// A struct literal argument is split by this formatter; that split alone
+	// should not make the surrounding if condition a header diagnostic.
+	if rules.structLitArgument(call) {
+		return false
+	}
+	if len(call.Args) == 0 {
+		return rules.multiline(call)
+	}
+	if rules.line(call.Args[0].Pos()) != rules.line(call.Lparen) {
+		return true
+	}
+	previous := call.Args[0].End()
+	for _, argument := range call.Args[1:] {
+		if rules.line(argument.Pos()) != rules.line(previous) {
+			return true
+		}
+		previous = argument.End()
+	}
+	return false
 }
 
 func (rules *fileRules) structLitArgument(call *ast.CallExpr) bool {

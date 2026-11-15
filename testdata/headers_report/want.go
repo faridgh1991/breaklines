@@ -5,6 +5,7 @@ type input struct {
 }
 
 func check(value input) (int, error) { return 0, nil }
+func enabled(value input) bool       { return true }
 
 func reports() (int, error) {
 	if _, err := check(
@@ -25,4 +26,15 @@ func reports() (int, error) {
 	first, second :=
 		1, 2
 	return first + second, nil
+}
+
+func reportsCall() bool {
+	if enabled(
+		input{
+			Name: "c",
+		},
+	) {
+		return true
+	}
+	return false
 }

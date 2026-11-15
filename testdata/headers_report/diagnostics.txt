@@ -1,2 +1,2 @@
-input.go:20:12: struct literal in an if condition; assign it to a variable first
-input.go:25:2: multi-value assignment spans lines; assign one variable per line
+input.go:21:12: struct literal in an if condition; assign it to a variable first
+input.go:26:2: multi-value assignment spans lines; assign one variable per line
