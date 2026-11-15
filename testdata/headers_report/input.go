@@ -26,3 +26,11 @@ func reportsCall() bool {
 	}
 	return false
 }
+
+func booleanCondition(a, b, c bool) bool {
+	if a || b &&
+		c {
+		return true
+	}
+	return false
+}

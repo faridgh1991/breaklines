@@ -125,7 +125,7 @@ breaklines:
 ## Limits
 
 - Files excluded by build tags are not seen; pass `-tags` to include them.
-- Long boolean conditions split over lines (`if a ||` then `b {`) are not a rule and are left alone.
+- Boolean conditions that already span lines are split so each `&&` or `||` operand starts on its own line.
 - An unkeyed struct literal stays unkeyed; only its fields go on their own lines.
 - Without `-fix-headers` it only reports header problems; with it, some stay reported for a hand fix.
 

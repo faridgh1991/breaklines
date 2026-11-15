@@ -583,9 +583,11 @@ func (rules *fileRules) checkNode(root ast.Node, elseIfs map[*ast.IfStmt]bool) {
 			if elseIf, isIf := node.Else.(*ast.IfStmt); isIf {
 				elseIfs[elseIf] = true
 			}
+			rules.boolean(node.Cond, false)
 			rules.ifStmt(node, elseIfs[node])
 		case *ast.ForStmt:
 			if node.Cond != nil {
+				rules.boolean(node.Cond, false)
 				ast.Inspect(node.Cond, func(inner ast.Node) bool {
 					if call, isCall := inner.(*ast.CallExpr); isCall && rules.multiline(call) {
 						rules.report(call.Pos(), "call spans lines in a for condition; assign its result first")
@@ -608,6 +610,24 @@ func (rules *fileRules) checkNode(root ast.Node, elseIfs map[*ast.IfStmt]bool) {
 		}
 		return true
 	})
+}
+
+// boolean breaks && and || operands when the surrounding expression spans lines.
+func (rules *fileRules) boolean(expression ast.Expr, force bool) {
+	if paren, ok := expression.(*ast.ParenExpr); ok {
+		rules.boolean(paren.X, force)
+		return
+	}
+	binary, ok := expression.(*ast.BinaryExpr)
+	if !ok || (binary.Op != token.LAND && binary.Op != token.LOR) {
+		return
+	}
+	if !force && !rules.multiline(binary) {
+		return
+	}
+	rules.boolean(binary.X, true)
+	rules.breakBefore(binary.X.End(), binary.Y.Pos())
+	rules.boolean(binary.Y, true)
 }
 
 // apply returns src with changes applied. A group that overlaps a change
