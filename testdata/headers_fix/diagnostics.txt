@@ -1,0 +1,4 @@
+input.go:43:5: if init spans lines, and moving it before the if would redeclare err, which this block declares later; fix it by hand
+input.go:61:12: if init spans lines in an else if; restructure it by hand
+input.go:78:6: if init spans lines, and moving it before the if would make err shadow, or be shadowed by, another variable of that name; fix it by hand
+input.go:90:5: if init spans lines, and moving it before the if would make err shadow, or be shadowed by, another variable of that name; fix it by hand
